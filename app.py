@@ -14,11 +14,14 @@ LOG_FILE = Path("logs.jsonl")
 # 確保 logs.jsonl 檔案存在，避免初始化錯誤
 if not LOG_FILE.exists():
     LOG_FILE.write_text("")
-    try:
-        import commit_logs
-        print("✅ Log push completed.")
-    except Exception as e:
-        print("⚠️ Log push failed:", e)
+
+# 每次啟動都嘗試上傳 logs
+try:
+    import commit_logs
+    print("✅ Log push completed.")
+except Exception as e:
+    print("⚠️ Log push failed:", e)
+
 
 
 # 初始化記錄函式
