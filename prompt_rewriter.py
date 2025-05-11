@@ -1,4 +1,4 @@
-def rewrite_prompt(user_input):
+def rewrite_prompt(user_input:str):
     emotional_patterns = {
         "焦慮": {
             "keywords": ["好焦慮", "壓力好大", "我怕", "緊張", "心跳很快"],
