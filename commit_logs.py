@@ -1,3 +1,5 @@
+# commit_logs.py（簡化穩定版）
+
 import os
 import datetime
 from huggingface_hub import HfApi
