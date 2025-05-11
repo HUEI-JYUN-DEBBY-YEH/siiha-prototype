@@ -1,39 +1,27 @@
-# commit_logs.py（簡化穩定版）
-
+# commit_logs.py
+from huggingface_hub import upload_file
+from pathlib import Path
 import os
-import datetime
-from huggingface_hub import HfApi
 
-def upload_logs():
-    if not os.path.exists("logs.jsonl"):
-        print("❌ logs.jsonl not found. Skipping upload.")
-        return
+# 讀取 Hugging Face token
+token = os.getenv("HF_WRITE_TOKEN")
+if not token:
+    raise ValueError("❌ HF_WRITE_TOKEN 環境變數未設置")
 
-    # Load token from environment variable
-    token = os.environ.get("HF_WRITE_TOKEN")
-    if not token:
-        print("❌ HF_WRITE_TOKEN not set in Space secrets.")
-        return
+# 資料集目標資訊
+repo_id = "DEBBY-YEH/siiha-feedback-logs"
+path = Path("logs.jsonl")
 
-    api = HfApi(token=token)
+# 檢查檔案存在
+if not path.exists():
+    raise FileNotFoundError("❌ logs.jsonl 不存在，無法上傳")
 
-    # Load logs content
-    with open("logs.jsonl", "r", encoding="utf-8") as f:
-        content = f.read()
-
-    # Generate dated file name
-    today = datetime.date.today().strftime("%Y%m%d")
-    target_path = f"logs/logs_{today}.jsonl"
-
-    # Upload to the dataset repo
-    api.upload_file(
-        path_or_fileobj=content,
-        path_in_repo=target_path,
-        repo_id="DEBBY-YEH/siiha-feedback-logs",
-        repo_type="dataset"
-    )
-
-    print(f"✅ Successfully uploaded logs to {target_path}")
-
-# Run immediately at startup
-upload_logs()
+# 上傳 logs.jsonl
+upload_file(
+    path_or_file=path,
+    path_in_repo="logs.jsonl",  # 可以改名成含時間戳記的 logs 檔案
+    repo_id=repo_id,
+    repo_type="dataset",
+    token=token,
+    overwrite=True,
+)
