@@ -1,39 +1,20 @@
-# prompt_rewriter.py
 
-def rewrite_prompt(user_input, emotion_label):
-    """
-    根據分類後的情緒標籤，轉換輸入語氣以利模型更穩定生成。
-    """
-    if emotion_label == "正向":
-        return user_input
+def rewrite_prompt(user_input):
+    emotional_categories = {
+        "焦慮": "你的訊息透露出一種焦慮或不安的情緒。我們先一起釐清你遇到的情境與問題。",
+        "憤怒": "這段話中包含強烈的不滿或憤怒，我會協助你釐清問題並聚焦在具體事件上。",
+        "憂鬱": "這段話可能隱含較深的情緒低落，我們先理性討論發生了什麼，協助你釐清情緒來源。",
+        "羞愧": "你提到的內容可能帶有羞愧或自責感，我會幫你以中立的視角釐清事件，避免自責過度。"
+    }
 
-    elif emotion_label == "中性":
-        return f"使用者提問：「{user_input}」\n請以專業、條列式方式提供清楚說明。"
+    for emotion, preface in emotional_categories.items():
+        if any(word in user_input for word in ["好焦慮", "壓力好大", "我怕", "緊張", "心跳很快"]) and emotion == "焦慮":
+            return f"{preface}請根據以下問題提供清楚建議：『{user_input}』你是怎麼想的？"
+        elif any(word in user_input for word in ["我受夠了", "超級爛", "氣死我", "爛透了", "不能忍"]) and emotion == "憤怒":
+            return f"{preface}請根據以下問題提供清楚建議：『{user_input}』你會怎麼理解這段情緒？"
+        elif any(word in user_input for word in ["我不想活", "好累", "沒用", "無助", "沒人懂"]) and emotion == "憂鬱":
+            return f"{preface}我們不急著解決問題，請協助分析這句話透露的內在狀態：「{user_input}」"
+        elif any(word in user_input for word in ["對不起", "都是我不好", "我很丟臉", "不敢講"]) and emotion == "羞愧":
+            return f"{preface}請協助客觀釐清以下話語可能產生的誤解與背景：「{user_input}」"
 
-    elif emotion_label == "焦慮":
-        return (
-            "我知道這件事可能讓人感到不確定，我會陪你一步步釐清。\n"
-            f"我想先請問：在這個狀況中，您最關注的部分是什麼？\n「{user_input}」"
-        )
-
-    elif emotion_label == "憤怒":
-        return (
-            "看起來這個情境確實讓您感受到一些衝突與不滿，我會保持客觀地幫您整理問題。\n"
-            f"請您先描述一下具體的事件或背景：「{user_input}」"
-        )
-
-    elif emotion_label == "憂鬱":
-        return (
-            "我明白有些時候會讓人覺得停滯或低落，我會試著幫您從現況找出可能的出口。\n"
-            f"請問您遇到的具體難點是什麼？\n「{user_input}」"
-        )
-
-    elif emotion_label == "羞愧感":
-        return (
-            "有些情境確實會讓人懷疑自己的表現，但我們可以回到事件本身來釐清。\n"
-            f"能否請您先描述一下那個當下的具體互動？\n「{user_input}」"
-        )
-
-    else:
-        # 若模型無法判斷，預設為中性處理
-        return f"請根據以下問題提供清楚建議：「{user_input}」"
+    return f"請根據以下問題提供清楚建議：『{user_input}』你是怎麼想的？"
