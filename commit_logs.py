@@ -1,40 +1,37 @@
-# commit_logs.py
-# ✅ 將 logs.jsonl 推送至 Hugging Face Datasets Repo: DEBBY-YEH/siiha-feedback-logs
-# 使用 HF_TOKEN secret，自動上傳當日 log 檔
-
 import os
-import json
-import shutil
-from datetime import datetime
-from huggingface_hub import HfApi, Repository
+import datetime
+from huggingface_hub import HfApi
 
-# === 設定 ===
-HF_TOKEN = os.environ.get("HF_TOKEN")
-REPO_ID = "DEBBY-YEH/siiha-feedback-logs"
-LOCAL_LOG = "logs.jsonl"
-LOCAL_CLONE_DIR = "_temp_dataset_repo"
+def upload_logs():
+    if not os.path.exists("logs.jsonl"):
+        print("❌ logs.jsonl not found. Skipping upload.")
+        return
 
-# === 日期處理 ===
-now = datetime.utcnow()
-log_date_str = now.strftime("%Y%m%d")
-remote_log_path = f"logs/logs_{log_date_str}.jsonl"
+    # Load token from environment variable
+    token = os.environ.get("HF_WRITE_TOKEN")
+    if not token:
+        print("❌ HF_WRITE_TOKEN not set in Space secrets.")
+        return
 
-# === 步驟 1: Clone datasets repo ===
-print("🔄 Cloning datasets repo...")
-repo_url = f"https://{HF_TOKEN}@huggingface.co/datasets/{REPO_ID}"
-repo = Repository(LOCAL_CLONE_DIR, clone_from=repo_url, use_auth_token=HF_TOKEN)
-repo.git_pull()
+    api = HfApi(token=token)
 
-# === 步驟 2: 複製 log 檔到指定位置 ===
-print("📄 Copying log file...")
-os.makedirs(os.path.join(LOCAL_CLONE_DIR, "logs"), exist_ok=True)
-dest_path = os.path.join(LOCAL_CLONE_DIR, remote_log_path)
-shutil.copyfile(LOCAL_LOG, dest_path)
+    # Load logs content
+    with open("logs.jsonl", "r", encoding="utf-8") as f:
+        content = f.read()
 
-# === 步驟 3: Commit + Push ===
-print("🚀 Committing and pushing...")
-repo.git_add([dest_path])
-repo.git_commit(f"Add log {log_date_str}")
-repo.git_push()
+    # Generate dated file name
+    today = datetime.date.today().strftime("%Y%m%d")
+    target_path = f"logs/logs_{today}.jsonl"
 
-print(f"✅ Uploaded logs to: {REPO_ID}/{remote_log_path}")
+    # Upload to the dataset repo
+    api.upload_file(
+        path_or_fileobj=content,
+        path_in_repo=target_path,
+        repo_id="DEBBY-YEH/siiha-feedback-logs",
+        repo_type="dataset"
+    )
+
+    print(f"✅ Successfully uploaded logs to {target_path}")
+
+# Run immediately at startup
+upload_logs()
