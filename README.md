@@ -1,57 +1,65 @@
 # 🤖 SIIHA: Self-Improving Instructional HR Assistant (Zephyr-7B-LoRA)
-A Taiwan-based, human-centered AI assistant designed to support workplace learning, emotional alignment, and fair HR practices — powered by a Zephyr-7B language model fine-tuned with LoRA.
 
-## ✨ Features
-🧠 Instruction-following SFT base: Fine-tuned on HR, workplace, and communication tasks
-💬 Supports Traditional Chinese prompts
-🧘 Taiwanese conversational persona: Warm, neutral tone that invites reflection and respects cultural nuances
-😌 Emotion-aware prompting: Dynamically rewrites user queries based on emotional tone (anxiety, anger, sadness, shame)
-🔄 Self-improving loop ready: Designed for future feedback logging and retrainability
+SIIHA is a Taiwan-based, human-centered AI assistant designed to enhance workplace reflection, emotional alignment, and fair HR decision-making — built on a fine-tuned Zephyr-7B language model (via LoRA). The system prioritizes linguistic sensitivity, cultural nuance, and emotional grounding in Mandarin Chinese.
 
-## 🧠 Dialogue Style & Language Enhancement
-為了更貼合台灣職場文化與安全互動場景，SIIHA 採用以下語調與處理方式：
+---
 
-###🤖 台灣語境人格調整（中性 × 指導式）
-- 全面採用 繁體中文 回應
-- 使用 中性溫和、具指導性語氣，鼓勵使用者釐清問題而非立即下結論
-- 針對使用者情緒不穩定時，不急於認同或貼標籤，避免誤導
+## ✨ Key Features
 
-### 🧠 Prompt Rewriting × 情緒辨識
-系統內建情緒辨識與 Prompt Rewriter，根據輸入語氣自動轉寫，再送入模型：
+- 🧠 **Instruction-tuned base**: Fine-tuned on HR and workplace communication tasks using Zephyr-7B.
+- 💬 **Traditional Chinese support**: Accepts and responds in Traditional Mandarin.
+- 🧘 **Culturally adapted tone**: Calm, reflective, and guidance-oriented — aligned with Taiwanese workplace dynamics.
+- 😌 **Emotion-aware rewriting**: Auto-detects user sentiment and rewrites inputs based on four emotional dimensions:
+  - Anxiety
+  - Anger
+  - Sadness
+  - Shame
+- 🔄 **Self-improvement ready**: Designed for future integration of feedback logging and SFT retraining loops.
 
-支援四大情緒細類：
-- 焦慮（Anxiety）：幫助釐清焦慮來源，引導更穩定描述
-- 憤怒（Anger）：引導理性表述，避免強化對立語言
-- 憂鬱（Sadness）：溫和回應並鼓勵說出具體經歷
-- 羞愧（Shame）：保持尊重與自我肯定語氣，避免傷害信心
+---
 
-## 🗂 Example Prompts
-➤ 中文輸入（正向）
+## 🧠 Dialogue Handling & Emotion Adaptation
+
+To ensure psychological safety in emotionally intense workplace queries, SIIHA includes a prompt rewriting module that adapts user input tone before generation.  
+Example transformation (input → rewritten prompt):
+
+> Original: `這什麼爛制度，升遷根本沒公平！`  
+> Rewritten: `這個情境讓您感受到衝突與不滿。我會幫您客觀整理問題。請先描述具體事件：「這什麼爛制度，升遷根本沒公平！」`
+
+---
+
+## 🧪 Example Prompt
+
+Input
 ```bash
-請幫我設計一段人資新人入職歡迎詞。
+User: 請幫我設計一段人資新人入職歡迎詞。
 ```
-➤ 情緒偏激（憤怒）
-```bash
-這什麼爛制度，升遷根本沒公平！
+
+Output
+```markdown
+歡迎您加入團隊！我們重視每一位夥伴的貢獻，期待與您共同成長、實現組織的願景與價值。
 ```
-➡️ 轉寫後送入模型：
-```
-看起來這個情境確實讓您感受到一些衝突與不滿，我會保持客觀地幫您整理問題。
-請您先描述一下具體的事件或背景：「這什麼爛制度，升遷根本沒公平！」
-```
+
+## 🖼 Demo Preview
+![SIIHA Demo](https://huggingface.co/spaces/DEBBY-YEH/zephyr-7b-tw-siiha-demo/+/raw/main/siiha_demo.png)
+
+👉 [Try it live on Hugging Face Space](https://huggingface.co/spaces/DEBBY-YEH/zephyr-7b-tw-siiha-demo)
 
 ## 🧱 Tech Stack
-- HuggingFaceH4/zephyr-7b-beta base model
-- peft + LoRA 微調：DEBBY-YEH/zephyr-7b-lora-debby-v1
-- 中文情緒分類模型：IDEA-CCNL/Erlangshen-Roberta-110M-Sentiment
-- Prompt rewriter 語氣引導模組
-- Gradio 前端部署
+- 🤖 HuggingFaceH4/zephyr-7b-beta as base model
+- 🔧 LoRA fine-tuning with peft
+- 🧭 Prompt rewriting + sentiment classification with Erlangshen-Roberta-110M-Sentiment
+- 🌐 Gradio UI frontend for interactive testing
+- 📘 Built for real-world Mandarin HR inputs in Taiwan
 
-##🔮 Future Plans
-- Feedback logging via thumbs-up/down
-- Self-retrain data bootstrapping loop
-- Multilingual or domain-specific versions
+## 🔭 Future Plans
+- 🔄 Feedback logging + retraining loop integration
+- 🌍 Expandable to other Asian workplace cultures and languages
+- 📊 Responsible AI extensions for workplace fairness metrics
 
-## 👤 Creator
-Debby Yeh｜Taiwan-based NLP engineer candidate exploring AI for fairer HR systems
-🔗 Portfolio｜🔗 Hugging Face｜🔗 Medium
+## 👩‍💻 Creator
+Debby Yeh｜NLP engineer candidate (Taiwan), designing fair, context-aware HR systems through AI.
+🔗 [Portfolio (Notion)](https://mango-mapusaurus-5df.notion.site/debby-yeh-portfolio?pvs=4)｜🔗 [Hugging Face](https://huggingface.co/DEBBY-YEH)｜🔗 [Medium](https://medium.com/@debby.yeh1994)
+
+“In emotionally charged workplaces, most HR systems go silent.
+SIIHA listens — and responds with care.”
