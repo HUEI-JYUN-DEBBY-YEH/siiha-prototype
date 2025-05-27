@@ -1,18 +1,39 @@
-# Emotion-Aware HR Assistant: A SIIHA-Inspired Conversational Prototype
+# SIIHA: A Human-Centered HR Assistant Using Gemini Function Calling
 
-This is a lightweight prototype of an emotion-aware HR assistant, built using conversational flows inspired by SIIHA — a previous HR-AI project. It explores how a Gemini-powered chatbot might detect emotionally charged language and offer human-centered, trust-rebuilding responses in real workplace conversations.
+SIIHA (System for Integrated Interaction in Human-centered Assistance) is a multilingual HR agent powered by Gemini API. It handles real-world employee requests with structured reasoning, function calling, and emotionally aware responses.
 
-## How it works
+This prototype is designed to demonstrate:
+- Multi-function orchestration using Gemini Pro
+- Natural, warm interaction in English and Mandarin
+- Human-centered applications of LLMs in HR
 
-The assistant is designed to:
-- Detect key emotional states like shame, anxiety, or anger based on user input
-- Suggest rephrasings grounded in HR best practices (PHRI-aligned)
-- Provide cultural-contextual HR advice for typical workplace scenarios
+1. Demo Video
+Watch the demo:
+[https://1drv.ms/v/c/c5ea358666ea3108/EcWSRbsVQftPhxQDFs2ZkcMBS-xLAne1j_DKansr70vfGw?e=FNY2z0]
 
-The goal is to create a model of soft-power AI that supports HR professionals not only in solving tasks, but also in fostering workplace dignity and understanding.
+2. Key Features
+- Conversational Function Calling: Handles multi-intent tasks in a single query
+- Emotion-Neutral Reply Design: Ensures psychological safety in workplace scenarios
+- Custom Task Agent: Combines Gemini API with Python backend logic
+- Bilingual Input Support: Optimized for Mandarin-English workplace queries
 
-## Why it matters
+3. System Flow
+- siiha_gemini_english_demo.py: Main demo interface (Gradio)
+- functions/schema/*.json: OpenAPI-style function definitions
+- task_agent.py: Reasoning + decision engine
+- README.md: Current file
 
-Most HR tools focus on compliance or automation. This prototype explores a different angle: emotional intelligence. In workplaces across Asia (and beyond), unspoken emotional cues often shape outcomes. This assistant aims to bridge that gap with responsible AI.
+4. Quickstart
+bash
+```
+git clone https://github.com/HUEI-JYUN-DEBBY-YEH/siiha-prototype.git
+cd siiha-prototype
+pip install -r requirements.txt
+python siiha_gemini_english_demo.py
+```
+Then open http://127.0.0.1:7860 in your browser.
 
-This project is part of a broader vision called "SIIHA" — Socially Intelligent, Interculturally Human-Aware Assistants — where AI is used to align with human values, not just outputs.
+5. Why This Project Matters
+This prototype was built to demonstrate how LLMs can enhance trust, clarity, and cultural sensitivity in everyday HR systems.
+
+It is part of a broader vision — using AI not to replace human judgment, but to support fair, kind, and inclusive decision-making in organizations.g
