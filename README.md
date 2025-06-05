@@ -70,15 +70,15 @@ This prototype demonstrates how **SIIHA** (System for Intent-Informed Human Assi
 GOOGLE_API_KEY=your-gemini-api-key
 NOTION_TOKEN=your-notion-token
 NOTION_DATABASE_ID=your-database-id
-
+```
 2. Install dependencies:
 ```
 pip install -r requirements.txt
-
+```
 3. Run the demo locally:
 ```
 python siiha_gemini_english_demo.py
-
+```
 ## 🧭 Credits & Vision
 This is part of the 願筆三部曲技術展示計畫, a human-centered AI research and design initiative by Debby Yeh.
 We believe AI should listen before it acts, and this prototype explores how intent understanding, fallback reflection, and emotional logging can co-exist in responsible AI systems.
