@@ -1,39 +1,87 @@
-# SIIHA: A Human-Centered HR Assistant Using Gemini Function Calling
+# 🤖 SIIHA × Gemini × Notion Integration
 
-SIIHA (System for Integrated Interaction in Human-centered Assistance) is a multilingual HR agent powered by Gemini API. It handles real-world employee requests with structured reasoning, function calling, and emotionally aware responses.
+This prototype demonstrates how **SIIHA** (System for Intent-Informed Human Assistance) integrates **Google Gemini API** with **Notion**, enabling a human-centered conversational assistant that can:
 
-This prototype is designed to demonstrate:
-- Multi-function orchestration using Gemini Pro
-- Natural, warm interaction in English and Mandarin
-- Human-centered applications of LLMs in HR
+- Detect user intent from natural language queries
+- Trigger structured task generation using Gemini function calling
+- Automatically log task plans and fallback responses into Notion for traceability and emotion-aware feedback
 
-## 1. Demo Video
-Watch the demo:
-[https://1drv.ms/v/c/c5ea358666ea3108/EcWSRbsVQftPhxQDFs2ZkcMBS-xLAne1j_DKansr70vfGw?e=FNY2z0]
+---
 
-## 2. Key Features
-- Conversational Function Calling: Handles multi-intent tasks in a single query
-- Emotion-Neutral Reply Design: Ensures psychological safety in workplace scenarios
-- Custom Task Agent: Combines Gemini API with Python backend logic
-- Bilingual Input Support: Optimized for Mandarin-English workplace queries
+## 🌟 Key Features
 
-## 3. System Flow
-- siiha_gemini_english_demo.py: Main demo interface (Gradio)
-- functions/schema/*.json: OpenAPI-style function definitions
-- task_agent.py: Reasoning + decision engine
-- README.md: Current file
+### 🧠 1. Conversational Task Flow with Gemini
+- Supports open-ended inputs like:
+  - _"We need two engineering interns this summer"_
+  - _"Help me design a JD for backend engineers"_
+- Gemini interprets intent and triggers structured plans.
 
-##　4. Quickstart
-bash
+### 📥 2. Notion Auto-Logging
+- All inputs and outputs are written into a Notion database.
+- Columns include:
+  - `Title`
+  - `Task`
+  - `Category`
+  - `Generated Plan` (fallback answers from Gemini)
+  - `Notes` (for long content > 2000 chars)
+  - `User Message`, `Intent`, `Created Date`
+
+### 💡 3. Fallback-Aware Logging
+- Even when Gemini cannot classify the intent (e.g., returns `unknown`), fallback answers are captured and pushed to Notion.
+- Ensures no user query is lost.
+
+---
+
+## 🛠️ Folder Overview
+
+| File | Description |
+|------|-------------|
+| `siiha_gemini_english_demo.py` | Main Gradio-based chat interface |
+| `functions.py` | Intent routing and Gemini function schemas |
+| `notion_api.py` | Handles Notion database write operations with length-aware slicing |
+| `create_notion_db.py` | Script to preconfigure a compatible Notion database |
+| `*.mp4` | Demo screen recordings of different scenarios |
+| `siiha_gemini_notion_flowchart.png` | Integration architecture diagram |
+
+---
+
+## 🎥 Demo Videos
+
+| Scenario | Demo Link |
+|----------|-----------|
+| Emotional Support Fallback | `SIIHA_Gemini_Notion_Integration_EmotionSupportDemo.mp4` |
+| Clear Task Detection | `SIIHA_Gemini_Notion_Integration_TaskAssistantDemo.mp4` |
+| Unspecified Queries | `SIIHA_Gemini_Notion_Integration_UnspecifiedTasksDemo.mp4` |
+
+---
+
+## 🧭 Use Cases
+
+- HR and team leaders capturing unclear or evolving needs
+- Conversational tracking of workplace emotional signals
+- Structured planning in cross-cultural or multilingual contexts
+
+---
+
+## 🔧 Setup Instructions
+
+1. Create a `.env` file with your keys:
+```env
+GOOGLE_API_KEY=your-gemini-api-key
+NOTION_TOKEN=your-notion-token
+NOTION_DATABASE_ID=your-database-id
+
+2. Install dependencies:
 ```
-git clone https://github.com/HUEI-JYUN-DEBBY-YEH/siiha-prototype.git
-cd siiha-prototype
 pip install -r requirements.txt
-python siiha_gemini_english_demo.py
+
+3. Run the demo locally:
 ```
-Then open http://127.0.0.1:7860 in your browser.
+python siiha_gemini_english_demo.py
 
-## 5. Why This Project Matters
-This prototype was built to demonstrate how LLMs can enhance trust, clarity, and cultural sensitivity in everyday HR systems.
+## 🧭 Credits & Vision
+This is part of the 願筆三部曲技術展示計畫, a human-centered AI research and design initiative by Debby Yeh.
+We believe AI should listen before it acts, and this prototype explores how intent understanding, fallback reflection, and emotional logging can co-exist in responsible AI systems.
 
-It is part of a broader vision — using AI not to replace human judgment, but to support fair, kind, and inclusive decision-making in organizations.g
+## 📬 Contact & Contributions
+For collaborations or feedback, feel free to reach out via LinkedIn[https://www.linkedin.com/in/debbyyeh/] or open a PR/discussion.
