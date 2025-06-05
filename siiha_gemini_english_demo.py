@@ -1,48 +1,102 @@
 import google.generativeai as genai
 import gradio as gr
+from config import GOOGLE_API_KEY
+from notion_api import write_task_to_notion
+from functions import (
+    query_leave_policy,
+    schedule_meeting,
+    generate_kpi,
+    recruit_interns,
+    respond_to_emotion
+)
 
 # Initialize Gemini
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
-model = genai.GenerativeModel("gemini-pro")
+genai.configure(api_key=GOOGLE_API_KEY)
+print("[Debug] Current GOOGLE_API_KEY =", GOOGLE_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-pro")
 
-# Define warm, human-centered functions
-def query_leave_policy():
-    return ("Sure. According to Taiwan’s Labor Standards Act, "
-            "you accumulate one day of paid leave for each month of work. "
-            "Would you like me to check your remaining balance?")
+# Intent map
+functions = {
+    "leave": query_leave_policy,
+    "meeting": lambda: schedule_meeting("HR Strategy Discussion"),
+    "kpi": lambda: generate_kpi("recruiter"),
+    "intern": recruit_interns,
+    "emotion": respond_to_emotion
+}
 
-def schedule_meeting(topic):
-    return (f"Got it! I’ve scheduled an HR meeting for you with the topic: ‘{topic}’. "
-            "Let me know if you'd like to adjust the time or invite others.")
-
-def generate_kpi(role):
-    return (f"Absolutely. Here are three key performance indicators for a {role}:\n"
-            "1. Task completion rate\n"
-            "2. Internal communication satisfaction\n"
-            "3. Timely project delivery\n"
-            "Let me know if you'd like to tailor these to your team.")
-
-# Routing function
-def siiha_agent(user_input):
+def detect_intent(user_input):
     user_input = user_input.lower()
-    if any(kw in user_input for kw in ["vacation", "leave", "paid leave", "time off"]):
-        return query_leave_policy()
-    elif any(kw in user_input for kw in ["meeting", "schedule", "hr strategy"]):
-        return schedule_meeting("HR Strategy Discussion")
-    elif any(kw in user_input for kw in ["kpi", "performance", "recruiter", "metrics"]):
-        return generate_kpi("recruiter")
-    else:
-        return "I'm here to support you. Could you rephrase that or give me a bit more context?"
+    for intent in functions:
+        if intent in user_input:
+            return intent
+    return None
+
+# Gemini fallback
+def gemini_fallback(user_input):
+    print("[Gemini] Triggered fallback for:", user_input)
+    try:
+        # Step 1: Intent classification
+        classification_prompt = (
+            f"You are an intent classifier for an HR assistant. Given the input: '{user_input}', "
+            "choose the most likely intent from this list: leave, meeting, kpi, intern, emotion.\n"
+            "Respond with just the intent keyword. If uncertain, respond with 'unknown'."
+        )
+        classification_response = model.generate_content(classification_prompt)
+        intent = classification_response.text.strip().lower()
+        print("[Gemini] API response text:", classification_response.text)
+        print("[Gemini] Predicted intent:", intent)
+
+        # Step 2a: If known intent, call mapped function
+        if intent in functions:
+            return functions[intent](), intent
+
+        # Step 2b: If unknown, generate answer anyway
+        answer_prompt = (
+            f"You are a helpful HR assistant. Answer the following user question as best as you can:\n\n"
+            f"User: {user_input}"
+        )
+        answer_response = model.generate_content(answer_prompt)
+        final_answer = answer_response.text.strip()
+        print("[Gemini] Final fallback answer:", final_answer)
+        return final_answer, intent
+
+    except Exception as e:
+        print("[ERROR] Gemini fallback failed:", e)
+        return "Sorry, I couldn’t process that.", "error"
+
+
+# Unified agent
+def siiha_agent(user_input):
+    intent = detect_intent(user_input)
+    if intent:
+        print(f"[Routing] Matched rule intent: {intent}")
+        response = functions[intent]()
+        return response, intent
+    return gemini_fallback(user_input)
 
 # Gradio UI
 with gr.Blocks() as demo:
-    gr.Markdown("## 🤖 SIIHA × Gemini: A Human-Centered AI Agent for HR")
-    gr.Markdown("Ask me anything about HR strategy, leave policies, or performance metrics.")
+    gr.Markdown("## 🤖 SIIHA × Gemini: Task-Based HR Agent")
     chatbot = gr.Chatbot()
-    msg = gr.Textbox(label="Your message", placeholder="e.g., How many leave days do I have left?")
+    msg = gr.Textbox(label="Your message", placeholder="e.g., I’m feeling burned out this week...")
 
     def respond(message, chat_history):
-        response = siiha_agent(message)
+        response, intent = siiha_agent(message)
+
+        # Log into Notion
+        try:
+            print("[SIIHA] Logging interaction to Notion...")
+            write_task_to_notion(
+                title=message,
+                task_description=message,
+                category=intent or "unknown",
+                generated_plan=f"[🤖 Gemini Answer]\n{response}" if intent == "unknown" else response,
+                user_message=message,
+                intent=intent or "unknown"
+            )
+        except Exception as e:
+            print("[SIIHA] Notion write failed:", e)
+
         chat_history.append((message, response))
         return "", chat_history
 
